@@ -1,24 +1,24 @@
-# 🏥 Patient Management System
+# Patient Management System
 
 A full-stack healthcare management web application built with **Spring Boot 4**, **Spring Security**, **Thymeleaf**, and **MySQL**, containerized with **Docker**.
 
 ---
 
-## 📸 Features
+##  Features
 
-- 👤 **Patient Management** — Create, view, update, delete patient records
-- 🩺 **Consultations** — Track medical consultations (diagnosis, treatment, notes)
-- 📅 **Appointments** — Schedule and manage appointments with status tracking
-- 🔔 **Notifications** — Real-time notification system (INFO, ALERT, REMINDER, URGENT)
-- 📊 **Dashboard** — Analytics and statistics overview
-- 📄 **PDF Export** — Generate patient records as PDF documents
-- 📧 **Email Notifications** — SMTP email integration via Mailtrap
-- 🔐 **Security** — Role-based access control (ADMIN / USER)
-- 📖 **REST API** — Full API documented with Swagger / OpenAPI 3.0
+-  **Patient Management** — Create, view, update, delete patient records
+-  **Consultations** — Track medical consultations (diagnosis, treatment, notes)
+-  **Appointments** — Schedule and manage appointments with status tracking
+-  **Notifications** — Real-time notification system (INFO, ALERT, REMINDER, URGENT)
+-  **Dashboard** — Analytics and statistics overview
+-  **PDF Export** — Generate patient records as PDF documents
+-  **Email Notifications** — SMTP email integration via Mailtrap
+-  **Security** — Role-based access control (ADMIN / USER)
+-  **REST API** — Full API documented with Swagger / OpenAPI 3.0
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -34,7 +34,7 @@ A full-stack healthcare management web application built with **Spring Boot 4**,
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -55,7 +55,7 @@ The application will be available at: **http://localhost:8086**
 
 ---
 
-## 🔑 Default Credentials
+## Default Credentials
 
 | Role | Username | Password |
 |---|---|---|
@@ -64,7 +64,7 @@ The application will be available at: **http://localhost:8086**
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 src/
@@ -84,7 +84,7 @@ src/
 
 ---
 
-## 🔌 API Endpoints
+##  API Endpoints
 
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
@@ -95,11 +95,11 @@ src/
 | DELETE | `/api/patients/{id}` | ADMIN | Delete patient |
 | GET | `/api/notifications/count` | AUTH | Unread notifications count |
 
-📖 Full API documentation: **http://localhost:8086/swagger-ui.html**
+ Full API documentation: **http://localhost:8086/swagger-ui.html**
 
 ---
 
-## 🔐 Role-Based Access Control
+## Role-Based Access Control
 
 | Route | ADMIN | USER |
 |---|---|---|
@@ -128,7 +128,7 @@ docker-compose.yml
 
 ---
 
-## 📊 Database Schema
+##  Database Schema
 
 ```
 patients          ←── consultations
@@ -140,7 +140,7 @@ users ←──────────── user_roles ──── app_roles
 
 ---
 
-## 🧪 Test Accounts Setup
+##  Test Accounts Setup
 
 Default users are created automatically on first startup by `DataInitializer`:
 
@@ -151,11 +151,9 @@ user  / user123   →  ROLE_USER
 
 ---
 
-## 📬 Contact
+## Contact
 
 **Abderrahmane** — [GitHub](https://github.com/Abderrahman-lab)
 📧 abderrahmanesaidi50@gmail.com
 
 ---
-
-> Built with ❤️ using Spring Boot & Docker
