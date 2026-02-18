@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${rendezVous != null and rendezVous.id != null} ? 'Modifier Rendez-vous' : 'Nouveau Rendez-vous'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+
+                <!-- Header -->
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi me-2"
+                           th:classappend="${rendezVous != null and rendezVous.id != null} ? 'bi-pencil-square' : 'bi-calendar-plus'"></i>
+                        <span th:text="${rendezVous != null and rendezVous.id != null} ? 'Modifier le Rendez-vous' : 'Nouveau Rendez-vous'"></span>
+                    </h5>
+                    <small class="text-white-50"
+                           th:text="'Patient : ' + ${patient.nom} + ' ' + ${patient.prenom}"></small>
+                </div>
+
+                <div class="card-body p-4">
+                    <form th:action="@{/rendez-vous/save}" th:object="${rendezVous}" method="post">
+
+                        <!-- Champs cachés -->
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" name="patientId" th:value="${patient.id}">
+
+                        <div class="row g-3">
+
+                            <!-- Date -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-calendar me-1"></i> Date du rendez-vous
+                                </label>
+                                <input type="date" th:field="*{dateRendezVous}" class="form-control"
+                                       th:classappend="${#fields.hasErrors('dateRendezVous')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:errors="*{dateRendezVous}">Date invalide</div>
+                            </div>
+
+                            <!-- Heure -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-clock me-1"></i> Heure du rendez-vous
+                                </label>
+                                <input type="time" th:field="*{heureRendezVous}" class="form-control"
+                                       th:classappend="${#fields.hasErrors('heureRendezVous')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:errors="*{heureRendezVous}">Heure invalide</div>
+                            </div>
+
+                            <!-- Motif -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-chat-left-text me-1"></i> Motif
+                                </label>
+                                <input type="text" th:field="*{motif}" class="form-control"
+                                       th:classappend="${#fields.hasErrors('motif')} ? 'is-invalid'"
+                                       placeholder="Motif de la consultation">
+                                <div class="invalid-feedback" th:errors="*{motif}">Motif invalide</div>
+                            </div>
+
+                            <!-- Statut -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Statut
+                                </label>
+                                <select th:field="*{statut}" class="form-select">
+                                    <option th:each="s : ${allStatuts}"
+                                            th:value="${s}"
+                                            th:text="${s}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-journal-text me-1"></i> Notes
+                                    <span class="text-muted fw-normal">(optionnel)</span>
+                                </label>
+                                <textarea th:field="*{notes}" class="form-control" rows="3"
+                                          placeholder="Informations complémentaires..."></textarea>
+                            </div>
+
+                        </div>
+
+                        <!-- Boutons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/rendez-vous/patient/{id}(id=${patient.id})}"
+                               class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary fw-bold">
+                                <i class="bi bi-save me-1"></i>
+                                <span th:text="${rendezVous != null and rendezVous.id != null} ? 'Mettre à jour' : 'Enregistrer'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

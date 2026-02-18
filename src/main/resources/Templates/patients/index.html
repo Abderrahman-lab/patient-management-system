@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Liste des Patients</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container-fluid py-4">
+    <div class="card shadow">
+
+        <!-- Header -->
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="bi bi-people-fill me-2"></i>Liste des Patients</h4>
+            <!-- Bouton Ajouter : ADMIN seulement -->
+            <a sec:authorize="hasRole('ADMIN')"
+               th:href="@{/admin/addPatient}" class="btn btn-light btn-sm fw-bold">
+                <i class="bi bi-plus-circle me-1"></i> Nouveau patient
+            </a>
+        </div>
+
+        <div class="card-body">
+            <!-- Recherche -->
+            <form th:action="@{/index}" method="get" class="mb-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search text-primary"></i></span>
+                    <input type="text" name="keyword" th:value="${keyword}"
+                           class="form-control" placeholder="Rechercher par nom ou prénom...">
+                    <button type="submit" class="btn btn-primary">Rechercher</button>
+                    <a th:href="@{/index}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Réinitialiser
+                    </a>
+                </div>
+            </form>
+
+            <!-- Table -->
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle">
+                    <thead class="table-primary text-center">
+                    <tr>
+                        <th><i class="bi bi-hash"></i> ID</th>
+                        <th><i class="bi bi-person"></i> Nom</th>
+                        <th><i class="bi bi-person-badge"></i> Prénom</th>
+                        <th><i class="bi bi-calendar"></i> Date Naissance</th>
+                        <th><i class="bi bi-activity"></i> État</th>
+                        <th><i class="bi bi-bar-chart"></i> Score</th>
+                        <th class="text-center"><i class="bi bi-gear"></i> Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(patients)}">
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            Aucun patient trouvé
+                        </td>
+                    </tr>
+
+                    <tr th:each="p : ${patients}">
+                        <td class="text-center fw-bold text-muted" th:text="${p.id}"></td>
+                        <td class="fw-bold" th:text="${p.nom}"></td>
+                        <td th:text="${p.prenom}"></td>
+                        <td class="text-center" th:text="${#temporals.format(p.dateNaissance,'dd/MM/yyyy')}"></td>
+                        <td class="text-center">
+                                <span class="badge rounded-pill fs-6"
+                                      th:classappend="${p.malade} ? 'bg-danger' : 'bg-success'"
+                                      th:text="${p.malade} ? 'Malade' : 'En bonne santé'">
+                                </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar"
+                                     th:classappend="${p.score >= 75} ? 'bg-success' : (${p.score >= 50} ? 'bg-warning' : 'bg-danger')"
+                                     th:style="'width: ' + ${p.score} + '%'"
+                                     th:text="${p.score} + '/100'">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <!-- Voir détail -->
+                                <a th:href="@{/patient/{id}(id=${p.id})}"
+                                   class="btn btn-info btn-sm" title="Détail">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <!-- Dossier médical : tout le monde -->
+                                <a th:href="@{/consultations/patient/{id}(id=${p.id})}"
+                                   class="btn btn-secondary btn-sm" title="Dossier médical">
+                                    <i class="bi bi-folder2-open"></i>
+                                </a>
+                                <!-- Rendez-vous : tout le monde -->
+                                <a th:href="@{/rendez-vous/patient/{id}(id=${p.id})}"
+                                   class="btn btn-primary btn-sm" title="Rendez-vous">
+                                    <i class="bi bi-calendar2-check"></i>
+                                </a>
+                                <!-- Éditer : ADMIN seulement -->
+                                <a sec:authorize="hasRole('ADMIN')"
+                                   th:href="@{/admin/editPatient/{id}(id=${p.id})}"
+                                   class="btn btn-warning btn-sm" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <!-- Supprimer : ADMIN seulement -->
+                                <a sec:authorize="hasRole('ADMIN')"
+                                   th:href="@{/admin/deletePatient/{id}(id=${p.id}, keyword=${keyword}, page=${currentPage})}"
+                                   class="btn btn-danger btn-sm" title="Supprimer"
+                                   onclick="return confirm('Confirmer la suppression ?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <nav th:if="${totalPages > 1}">
+                <ul class="pagination justify-content-center mb-0">
+                    <!-- Précédent -->
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/index(page=${currentPage - 1}, keyword=${keyword})}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    <!-- Pages -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/index(page=${i}, keyword=${keyword})}"
+                           th:text="${i + 1}"></a>
+                    </li>
+                    <!-- Suivant -->
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/index(page=${currentPage + 1}, keyword=${keyword})}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer text-muted text-center">
+            <small>Total : <strong th:text="${patients.size()}"></strong> patient(s) affiché(s)</small>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

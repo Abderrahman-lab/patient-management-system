@@ -1,0 +1,50 @@
+services:
+
+  # ── Base de données MySQL ──────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: patients-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: patients_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── Application Spring Boot ────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: patient-test-app:latest
+    container_name: patients-app
+    restart: on-failure
+    ports:
+      - "8086:8086"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # Base de données — pointe vers le service mysql interne
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/patients_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # Email Mailtrap
+      SPRING_MAIL_HOST: sandbox.smtp.mailtrap.io
+      SPRING_MAIL_PORT: 2525
+      SPRING_MAIL_USERNAME: a1abdcac183134
+      SPRING_MAIL_PASSWORD: 76e4a0d891b5b5
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+
+volumes:
+  mysql_data:

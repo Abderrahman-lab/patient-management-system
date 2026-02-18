@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title th:text="${patient != null and patient.id != null} ? 'Modifier Patient' : 'Nouveau Patient'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card shadow">
+
+                <!-- Header ✅ sécurisé -->
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi me-2"
+                           th:classappend="${patient != null and patient.id != null} ? 'bi-pencil-square' : 'bi-person-plus'"></i>
+                        <span th:text="${patient != null and patient.id != null} ? 'Modifier le Patient' : 'Ajouter un Patient'"></span>
+                    </h5>
+                </div>
+
+                <div class="card-body p-4">
+                    <form th:action="@{/admin/savePatient}" th:object="${patient}" method="post">
+
+                        <input type="hidden" th:field="*{id}">   <!-- ✅ * pas $ -->
+
+                        <div class="row g-3">
+                            <!-- Nom -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-person me-1"></i> Nom
+                                </label>
+                                <input type="text" th:field="*{nom}" class="form-control"
+                                       th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid'"
+                                       placeholder="Nom du patient">
+                                <div class="invalid-feedback" th:errors="*{nom}">Nom invalide</div>
+                            </div>
+
+                            <!-- Prénom -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-person-badge me-1"></i> Prénom
+                                </label>
+                                <input type="text" th:field="*{prenom}" class="form-control"
+                                       th:classappend="${#fields.hasErrors('prenom')} ? 'is-invalid'"
+                                       placeholder="Prénom du patient">
+                                <div class="invalid-feedback" th:errors="*{prenom}">Prénom invalide</div>
+                            </div>
+
+                            <!-- Date de naissance -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-calendar me-1"></i> Date de naissance
+                                </label>
+                                <input type="date" th:field="*{dateNaissance}" class="form-control">
+                            </div>
+
+                            <!-- Score -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-bar-chart me-1"></i> Score
+                                    <span class="text-muted fw-normal">(0 – 100)</span>
+                                </label>
+                                <input type="number" th:field="*{score}" class="form-control"
+                                       th:classappend="${#fields.hasErrors('score')} ? 'is-invalid'"
+                                       min="0" max="100" placeholder="Score">
+                                <div class="invalid-feedback" th:errors="*{score}">Score invalide</div>
+                            </div>
+
+                            <!-- Malade -->
+                            <div class="col-12">
+                                <div class="form-check form-switch ps-5">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{malade}" role="switch">
+                                    <label class="form-check-label fw-semibold">
+                                        <i class="bi bi-activity me-1"></i> Patient malade
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ══════════ DOSSIER MÉDICAL ══════════ -->
+                        <hr class="my-4">
+                        <h6 class="fw-bold text-primary mb-3">
+                            <i class="bi bi-journal-medical me-2"></i>Dossier Médical
+                        </h6>
+
+                        <div class="row g-3">
+                            <!-- Groupe sanguin + Médecin traitant -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-droplet-half me-1 text-danger"></i> Groupe sanguin
+                                </label>
+                                <select th:field="*{groupeSanguin}" class="form-select">
+                                    <option value="">-- Non renseigné --</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-person-badge me-1 text-primary"></i> Médecin traitant
+                                </label>
+                                <input type="text" th:field="*{medecinTraitant}" class="form-control"
+                                       placeholder="Dr. Nom Prénom">
+                            </div>
+
+                            <!-- Téléphone + Email -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-telephone me-1"></i> Téléphone
+                                </label>
+                                <input type="tel" th:field="*{telephone}" class="form-control"
+                                       placeholder="06XXXXXXXX">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-envelope me-1"></i> Email
+                                </label>
+                                <input type="email" th:field="*{email}" class="form-control"
+                                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                                       placeholder="exemple@email.com">
+                                <div class="invalid-feedback" th:errors="*{email}">Email invalide</div>
+                            </div>
+
+                            <!-- Adresse -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-geo-alt me-1"></i> Adresse
+                                </label>
+                                <input type="text" th:field="*{adresse}" class="form-control"
+                                       placeholder="Adresse complète">
+                            </div>
+
+                            <!-- Numéro Sécurité Sociale -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-credit-card-2-front me-1"></i> N° Sécurité Sociale
+                                </label>
+                                <input type="text" th:field="*{numeroSecuriteSociale}"
+                                       th:classappend="${#fields.hasErrors('numeroSecuriteSociale')} ? 'is-invalid' : ''"
+                                       class="form-control" placeholder="XXXXXXXXXXX">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('numeroSecuriteSociale')}"
+                                     th:errors="*{numeroSecuriteSociale}"></div>
+                            </div>
+
+                            <!-- Contact d'urgence -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-person-lines-fill me-1 text-warning"></i> Personne à contacter
+                                </label>
+                                <input type="text" th:field="*{personneContact}" class="form-control"
+                                       placeholder="Nom du contact">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-telephone-forward me-1 text-warning"></i> Tél. contact d'urgence
+                                </label>
+                                <input type="tel" th:field="*{telephoneContact}" class="form-control"
+                                       placeholder="06XXXXXXXX">
+                            </div>
+
+                            <!-- Allergies -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-exclamation-triangle me-1 text-danger"></i> Allergies connues
+                                </label>
+                                <textarea th:field="*{allergies}" class="form-control" rows="2"
+                                          placeholder="Pénicilline, arachides..."></textarea>
+                            </div>
+
+                            <!-- Antécédents -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-journal-medical me-1 text-info"></i> Antécédents médicaux
+                                </label>
+                                <textarea th:field="*{antecedents}" class="form-control" rows="3"
+                                          placeholder="Antécédents médicaux, chirurgicaux..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Boutons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/index}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary fw-bold">
+                                <i class="bi bi-save me-1"></i>
+                                <span th:text="${patient != null and patient.id != null} ? 'Mettre à jour' : 'Enregistrer'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="fr">
+
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" th:href="@{/index}">
+            <i class="bi bi-hospital me-2"></i>Gestion Patients
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/dashboard}">
+                        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/index}">
+                        <i class="bi bi-people me-1"></i> Patients
+                    </a>
+                </li>
+                <!-- Lien Admin uniquement -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/admin/addPatient}">
+                        <i class="bi bi-person-plus me-1"></i> Ajouter
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Utilisateur connecté -->
+            <ul class="navbar-nav ms-auto align-items-center">
+                <!-- Cloche notifications -->
+                <li class="nav-item me-2">
+                    <a class="nav-link position-relative" th:href="@{/notifications}" title="Notifications">
+                        <i class="bi bi-bell fs-5"></i>
+                        <span id="notifBadge"
+                              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                              style="display:none; font-size:0.65rem;"></span>
+                    </a>
+                </li>
+                <li class="nav-item me-2">
+                    <span class="navbar-text text-white">
+                        <i class="bi bi-person-circle me-1"></i>
+                        <span sec:authentication="name">Utilisateur</span>
+                        <span sec:authorize="hasRole('ADMIN')"
+                              class="badge bg-danger ms-1">ADMIN</span>
+                        <span sec:authorize="hasRole('USER')"
+                              class="badge bg-info ms-1">USER</span>
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-box-arrow-right me-1"></i> Déconnexion
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script th:inline="javascript">
+    // Badge notifications : rafraîchi au chargement de chaque page
+    (function () {
+        fetch('/api/notifications/count', {credentials: 'same-origin'})
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (data) {
+                if (data && data.count > 0) {
+                    var badge = document.getElementById('notifBadge');
+                    if (badge) {
+                        badge.textContent = data.count > 99 ? '99+' : data.count;
+                        badge.style.display = 'inline';
+                    }
+                }
+            })
+            .catch(function () { /* silencieux si non authentifié */ });
+    })();
+</script>
+</html>
