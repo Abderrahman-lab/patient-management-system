@@ -154,7 +154,7 @@ user  / user123   →  ROLE_USER
 ## 📬 Contact
 
 **Abderrahmane** — [GitHub](https://github.com/Abderrahman-lab)
-📧 your-email@example.com
+📧 abderrahmanesaidi50@gmail.com
 
 ---
 
