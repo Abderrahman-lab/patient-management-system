@@ -44,8 +44,8 @@ A full-stack healthcare management web application built with **Spring Boot 4**,
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/patient-management.git
-cd patient-management
+git clone https://github.com/Abderrahman-lab/patient-management-system.git
+cd patient-management-system
 
 # Start all services (MySQL + Spring Boot app)
 docker compose up --build -d
@@ -153,7 +153,7 @@ user  / user123   →  ROLE_USER
 
 ## 📬 Contact
 
-**Abderrahmane** — [LinkedIn](https://www.linkedin.com/in/your-profile)
+**Abderrahmane** — [GitHub](https://github.com/Abderrahman-lab)
 📧 your-email@example.com
 
 ---
